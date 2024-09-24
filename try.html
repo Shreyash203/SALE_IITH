@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Upload</title>
+</head>
+<body>
+    <h1>Upload Image to S3</h1>
+    <input type="file" id="file-input" />
+    <button onclick="uploadImage()">Upload</button>
+
+    <script src="https://sdk.amazonaws.com/js/aws-sdk-2.799.0.min.js"></script>
+    <script>
+        // AWS Config
+        //not uploaded for security reasons
+
+        // S3 Bucket
+        const s3 = new AWS.S3({
+            apiVersion: '2006-03-01',
+            params: { Bucket: 'shreyash205' }
+        });
+
+        // Upload function
+        function uploadImage() {
+            const fileInput = document.getElementById('file-input');
+            const file = fileInput.files[0];
+
+            if (!file) {
+                alert('Please choose a file first!');
+                return;
+            }
+
+            const params = {
+                Bucket: 'shreyash205/',
+                Key: file.name, // The name of the file in S3
+                Body: file,
+                ContentType: file.type,
+                ACL: 'public-read' // or private depending on your use case
+            };
+
+            // Upload to S3
+            s3.upload(params, function(err, data) {
+                if (err) {
+                    console.log('Error', err);
+                } else {
+                    console.log('Upload Success', data.Location);
+                    alert('Upload Success! File available at: ' + data.Location);
+                }
+            });
+        }
+        
+    </script>
+</body>
+</html>
