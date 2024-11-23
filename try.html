@@ -4,52 +4,52 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Image Upload</title>
+    <link rel="stylesheet" href="HOME.css"> <!-- Link to the external CSS file -->
 </head>
 <body>
-    <h1>Upload Image to S3</h1>
-    <input type="file" id="file-input" />
-    <button onclick="uploadImage()">Upload</button>
+    
 
+    <!-- Authentication Script -->
+    <!-- <script type="text/javascript" src="auth.js"></script> -->
+
+    <!-- Include AWS SDK -->
     <script src="https://sdk.amazonaws.com/js/aws-sdk-2.799.0.min.js"></script>
-    <script>
-        // AWS Config
-        //not uploaded for security reasons
+    <div class="container">
+        <h1>Upload Image to S3</h1>
+        <input type="file" id="file-input" />
+        <button onclick="uploadImage()">Upload</button>
+    </div>
+    <div id="gallery" style="width:864px;height:50px;"></div>
 
-        // S3 Bucket
-        const s3 = new AWS.S3({
-            apiVersion: '2006-03-01',
-            params: { Bucket: 'shreyash205' }
-        });
+    <!-- Image Upload Script -->
+    <script type="text/javascript" src="submit.js"></script>
+   <script>
+    function loadImages() {
+        const gallery = document.getElementById('gallery');
+        const params = { Bucket: 'shreyash205', Prefix: '/' };
 
-        // Upload function
-        function uploadImage() {
-            const fileInput = document.getElementById('file-input');
-            const file = fileInput.files[0];
-
-            if (!file) {
-                alert('Please choose a file first!');
-                return;
+        s3.listObjectsV2(params, function(err, data) {
+            if (err) {
+                console.log('Error fetching images:', err);
+            } else {
+                gallery.innerHTML = '';  // Clear previous gallery
+                data.Contents.forEach(function(item) {
+                    const imgElement = document.createElement('img');
+                    imgElement.src = `https://${params.Bucket}.s3.amazonaws.com/${item.Key}`;
+                    gallery.appendChild(imgElement);
+                });
             }
+        });
+    }
 
-            const params = {
-                Bucket: 'shreyash205/',
-                Key: file.name, // The name of the file in S3
-                Body: file,
-                ContentType: file.type,
-                ACL: 'public-read' // or private depending on your use case
-            };
-
-            // Upload to S3
-            s3.upload(params, function(err, data) {
-                if (err) {
-                    console.log('Error', err);
-                } else {
-                    console.log('Upload Success', data.Location);
-                    alert('Upload Success! File available at: ' + data.Location);
-                }
-            });
-        }
-        
-    </script>
+    // Load images on page load
+    window.onload = function() {
+        loadImages();
+    };
+</script>
+<div class="container2">
+    <h1>View Images</h1>
+    <button onclick="loadImages()">Upload</button>
+</div>
 </body>
 </html>
