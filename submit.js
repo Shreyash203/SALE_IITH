@@ -1,6 +1,6 @@
 AWS.config.update({
-        accessKeyId: 'AKIA4MTWL5DLCUM4SFMU',
-        secretAccessKey: 'xlivAf5S5BaznRtO1uGzrs89rbsQIOFj1GBPRu+1',
+        accessKeyId: YOUR_SECRET_ACCESS_KEY_ID,
+        secretAccessKey: YOUR_SECRET_ACCESS_KEY
         region: 'ap-south-1'
     });
     const s3 = new AWS.S3({
